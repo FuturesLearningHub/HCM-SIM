@@ -1,6 +1,7 @@
 import { onsite } from '../status';
 import { useGame } from '../store/game';
 import { personStatus } from '../status';
+import { Avatar } from '../ui/common';
 import { InboxList } from '../ui/Inbox';
 import { StatusGlyph } from '../ui/icons';
 import { activatePerson } from '../scene/actions';
@@ -23,11 +24,11 @@ export function ListView() {
             return (
               <li key={p.id}>
                 {st.stepId && s.phase === 'playing' ? (
-                  <button className="lv-person" onClick={() => s.openStep(st.stepId!)}><span><strong>{p.name}</strong><span className="muted">{p.title}</span></span><span className={`chip chip--${st.kind}`}><StatusGlyph kind={st.kind} />{st.label}</span></button>
+                  <button className="lv-person" onClick={() => s.openStep(st.stepId!)}><Avatar id={p.id} size={36} /><span className="lv-who"><strong>{p.name}</strong><span className="muted">{p.title}</span></span><span className={`chip chip--${st.kind}`}><StatusGlyph kind={st.kind} />{st.label}</span></button>
                 ) : p.greeting && s.phase === 'playing' ? (
-                  <button className="lv-person" onClick={() => activatePerson(p.id)}><span><strong>{p.name}</strong><span className="muted">{p.title}</span></span>{st.kind !== 'none' ? <span className={`chip chip--${st.kind}`}><StatusGlyph kind={st.kind} />{st.label}</span> : <span className="muted lv-hello">Say hello</span>}</button>
+                  <button className="lv-person" onClick={() => activatePerson(p.id)}><Avatar id={p.id} size={36} /><span className="lv-who"><strong>{p.name}</strong><span className="muted">{p.title}</span></span>{st.kind !== 'none' ? <span className={`chip chip--${st.kind}`}><StatusGlyph kind={st.kind} />{st.label}</span> : <span className="muted lv-hello">Say hello</span>}</button>
                 ) : (
-                  <div className="lv-person"><span><strong>{p.name}</strong><span className="muted">{p.title}</span></span>{st.kind !== 'none' && <span className={`chip chip--${st.kind}`}><StatusGlyph kind={st.kind} />{st.label}</span>}</div>
+                  <div className="lv-person"><Avatar id={p.id} size={36} /><span className="lv-who"><strong>{p.name}</strong><span className="muted">{p.title}</span></span>{st.kind !== 'none' && <span className={`chip chip--${st.kind}`}><StatusGlyph kind={st.kind} />{st.label}</span>}</div>
                 )}
               </li>
             );

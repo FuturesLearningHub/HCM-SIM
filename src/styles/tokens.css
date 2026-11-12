@@ -19,7 +19,7 @@
   --muted: rgba(245, 243, 239, 0.74);
   --line: rgba(207, 174, 112, 0.30);
   --line-soft: rgba(245, 243, 239, 0.14);
-  --glass: rgba(20, 20, 20, 0.70);
+  --glass: rgba(18, 18, 18, 0.78);
   --glass-strong: rgba(17, 17, 17, 0.86);
   /* Solid panel, where text would otherwise sit over other text (phones, List view) */
   --panel-solid: #161616;

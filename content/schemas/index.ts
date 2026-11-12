@@ -141,6 +141,21 @@ export const GameEvent = z.object({
 });
 export const Events = z.object({ events: z.array(GameEvent) });
 
+const Hex = z.string().regex(/^#[0-9A-Fa-f]{6}$/);
+/** How someone looks in the 3D office, matched to their portrait so the same person is recognizable in both. */
+export const Look = z.object({
+  skin: Hex,
+  hair: Hex,
+  hairStyle: z.enum(['bald', 'crop', 'short', 'bob', 'long', 'ponytail', 'afro']),
+  top: Hex,
+  bottom: Hex.optional(),
+  /** A second color at the collar: a shirt, scarf, or tee under a jacket. */
+  accent: Hex.optional(),
+  glasses: z.boolean().optional(),
+  /** Beard color, for those who have one. */
+  beard: Hex.optional(),
+});
+
 export const Person = z.object({
   id: z.string(),
   name: z.string(),
@@ -161,6 +176,8 @@ export const Person = z.object({
   greeting: z.string().optional(),
   /** Portrait under public/, such as avatars/mgr_ortiz.webp. Without one, the avatar shows initials. */
   photo: z.string().optional(),
+  /** Their figure in the 3D office. Without one, the figure uses the outfit color and a default look. */
+  look: Look.optional(),
 });
 export const Employees = z.object({ people: z.array(Person).min(1) });
 
@@ -279,6 +296,7 @@ export type EventStepT = z.infer<typeof EventStep>;
 export type MissionT = z.infer<typeof Mission>;
 export type GameEventT = z.infer<typeof GameEvent>;
 export type PersonT = z.infer<typeof Person>;
+export type LookT = z.infer<typeof Look>;
 export type PolicyT = z.infer<typeof Policies>['entries'][number];
 export type ConsequenceT = z.infer<typeof Consequence>;
 export type TotalsAdjustT = z.infer<typeof TotalsAdjust>;

@@ -32,6 +32,8 @@ Deviations from SPEC section 4 (deliberate):
 - Plain CSS tokens (`src/styles/tokens.css`) instead of Tailwind.
 - `motion` (the current Framer Motion package).
 - Procedural low-poly geometry instead of GLB models for Phase 1. No model downloads.
+  The set is merged by material (`src/scene/kit.ts`, `src/scene/set.ts`) and people are instanced (`src/scene/Figures.tsx`):
+  add furniture through the kit, never as its own mesh, and keep textures drawn in code (`src/scene/textures.ts`).
 - Debrief PDF uses the browser's print to PDF with a print stylesheet.
 - Character voices are ElevenLabs recordings shipped as static MP3s: every spoken line lives in content, then
   `tools/voice-manifest.mjs`, `tools/fetch-voice.mjs`, and `tools/voice-envelopes.mjs` build `content/voice.json`,

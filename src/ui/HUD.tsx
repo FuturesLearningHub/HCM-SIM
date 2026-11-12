@@ -8,15 +8,9 @@ import { Icon, MeterGlyph } from './icons';
 import { Dialog } from './common';
 import { activateHotspot } from '../scene/actions';
 import { voicePlayer } from '../audio/voice';
+import { PLACES } from '../places';
 import type { MeterKey } from '../../content/schemas';
 
-const PLACES: { id: string; label: string }[] = [
-  { id: 'terminal', label: 'Your desk' },
-  { id: 'board', label: 'Bulletin board' },
-  { id: 'office_a', label: "Dana's office" },
-  { id: 'office_b', label: "Marcus's office" },
-  { id: 'office_c', label: "Director's office" },
-];
 
 const U_TEXT = { normal: 'On track', warning: 'Last workday', critical: 'Final 4 hours', closed: 'Deadline passed' } as const;
 
@@ -130,11 +124,13 @@ export function HUD({ zoomStep, setZoom }: { zoomStep: number; setZoom: (n: numb
           {snap.deadlines.filter((d) => d.hud).map((d) => {
             const u = urgency(snap.time, d.time);
             const left = workMinutesBetween(snap.time, d.time);
+            const span = Math.max(1, workMinutesBetween(snap.start, d.time));
             return (
               <div key={d.key} className={`hud-cutoff liquid-glass u-${u}`} aria-label={`${d.label}: ${dateLabel(d.time)} at ${clockLabel(d.time)}. ${u === 'closed' ? 'Closed' : `${countdownLabel(left)} of work time left`}. ${U_TEXT[u]}.`}>
                 <span className="hud-cut-label">{d.label}</span>
                 <span className="hud-cut-when">{dateLabel(d.time)}, {clockLabel(d.time)}</span>
                 <span className="hud-count">{countdownLabel(left)}</span>
+                <span className="hud-left" aria-hidden="true"><span style={{ width: `${u === 'closed' ? 0 : Math.min(100, (left / span) * 100)}%` }} /></span>
                 <span className="hud-ustate">{u === 'normal' || u === 'closed' ? <Icon.clock /> : <Icon.alert />}{U_TEXT[u]}</span>
               </div>
             );
@@ -153,6 +149,7 @@ export function HUD({ zoomStep, setZoom }: { zoomStep: number; setZoom: (n: numb
           <ul className="places liquid-glass" aria-label="Places">
             {PLACES.map((p) => {
               const n = openCount(p.id);
+              if (p.quiet && !n) return null;
               return (
                 <li key={p.id}>
                   <button className={`place ${n ? 'has-task' : ''}`} onClick={() => activateHotspot(p.id)}>

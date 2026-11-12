@@ -230,6 +230,9 @@ export function TaskPanel() {
   const close = () => s.openStep(null);
   const allDone = status === 'done' || status === 'missed';
   const next = allDone ? s.snap.steps.filter((x) => x.id !== step.id && s.game!.status(x) === 'open').sort((a, b) => a.dueAt - b.dueAt)[0] : undefined;
+  const made = s.snap.resolutions[step.id];
+  const active = step.decisions.filter((d) => isDecisionActive(d, made));
+  const decided = active.filter((d) => made?.[d.id]).length;
   return (
     <Dialog labelId="task-h" onClose={close} className="drawer drawer--right liquid-glass-strong task" modal={false}>
       <div className="task-head" data-step={step.id}>
@@ -244,6 +247,12 @@ export function TaskPanel() {
           </p>
         </div>
       </div>
+      {active.length > 1 && (
+        <p className="task-progress">
+          <span className="pips" aria-hidden="true">{active.map((d) => <span key={d.id} className={`pip ${made?.[d.id] ? 'is-done' : ''}`} />)}</span>
+          {decided} of {active.length} decisions made
+        </p>
+      )}
       {step.opener && <Quote speaker={step.opener.speaker} text={step.opener.line} auto once={`open.${step.id}.${s.snap.seed}`} note />}
       <p className="context">{learnerText(step.context)}</p>
       {step.attachment && (

@@ -29,11 +29,12 @@ function Profile({ scores }: { scores: AreaScore[] }) {
             <span className="pf-bar" aria-hidden="true"><span style={{ width: `${pct}%` }} /></span>
             <span className="pf-score">{s.right} of {s.total}<span className="muted"> · {pctLabel(s)}</span></span>
             <span className={`pf-level lv-${lv}`}>{lv === 'mastered' ? <Icon.check /> : lv === 'none' ? <Icon.clock /> : <Icon.alert />}{LEVEL_TEXT[lv]}</span>
-            {s.courses.length > 0 && (
-              <span className="pf-courses">
-                {s.courses.map((slug) => { const c = courseLink(slug); return c ? <a key={slug} href={c.url} target="_blank" rel="noreferrer">{c.title}{c.parked && ' (topic page)'}<Icon.external /><span className="sr-only"> (opens in a new tab)</span></a> : null; })}
-              </span>
-            )}
+            {s.courses.length > 0 && (() => {
+              const links = s.courses.map((slug) => { const c = courseLink(slug); return c ? <a key={slug} href={c.url} target="_blank" rel="noreferrer">{c.title}{c.parked && ' (topic page)'}<Icon.external /><span className="sr-only"> (opens in a new tab)</span></a> : null; });
+              return s.courses.length > 4
+                ? <details className="pf-more"><summary>{s.courses.length} courses to review</summary><span className="pf-courses">{links}</span></details>
+                : <span className="pf-courses">{links}</span>;
+            })()}
           </li>
         );
       })}
@@ -123,10 +124,19 @@ export function Debrief() {
     <main className="debrief" id="main">
       <header className="db-head">
         <p className="eyebrow">Debrief · Role of the HCM · run code {snap.seed} · {snap.mode === 'training' ? 'Training' : 'Certification'} · {today}</p>
-        <label className="db-name"><span>Name for the printout</span><input value={settings.learnerName} onChange={(e) => setSettings({ learnerName: e.target.value })} placeholder="Optional" autoComplete="name" /><span className="fine">Stays in this browser.</span></label>
         {settings.learnerName && <p className="db-name-print">{settings.learnerName}</p>}
         <BlurText as="h1" text={`${r}.`} italic={r.split(' ').pop()} className="display display--sm" />
-        <p className="lede">{snap.ended?.reason === 'finished' ? `You wrapped up ${dateLabel(snap.ended.at)} at ${clockLabel(snap.ended.at)}, and payroll signed off when time cards came due.` : 'Time cards came due Monday at noon, and payroll signed off on whatever was in.'} {errors.length === 0 ? 'Every decision was the right call.' : `${snap.log.length - errors.length} of ${snap.log.length} decisions were the right call.`} {`${ontime.done} of ${ontime.total} requests were finished on time.`}{snap.hints.length > 0 && ` Hints used: ${snap.hints.length}.`}{minutes > 0 && ` Time played: about ${minutes} ${minutes === 1 ? 'minute' : 'minutes'}.`}{snap.mode === 'certification' && pauses > 0 && ` Pauses: ${pauses} (logged, not penalized).`}</p>
+        <p className="lede">{snap.ended?.reason === 'finished' ? `You wrapped up ${dateLabel(snap.ended.at)} at ${clockLabel(snap.ended.at)}, and payroll signed off when time cards came due.` : 'Time cards came due Monday at noon, and payroll signed off on whatever was in.'} {errors.length === 0 ? 'Every decision was the right call.' : `${snap.log.length - errors.length} of ${snap.log.length} decisions were the right call.`}</p>
+        <dl className="db-stats">
+          <div className="db-stat"><dt>Right calls</dt><dd><span className="db-num">{snap.log.length - errors.length}</span> of {snap.log.length}</dd></div>
+          <div className="db-stat"><dt>Finished on time</dt><dd><span className="db-num">{ontime.done}</span> of {ontime.total}</dd></div>
+          <div className="db-stat"><dt>Hints used</dt><dd><span className="db-num">{snap.hints.length}</span></dd></div>
+          <div className="db-stat"><dt>Time played</dt><dd><span className="db-num">{minutes}</span> {minutes === 1 ? 'minute' : 'minutes'}</dd></div>
+          {snap.mode === 'certification' && pauses > 0 && <div className="db-stat"><dt>Pauses</dt><dd><span className="db-num">{pauses}</span> logged, not penalized</dd></div>}
+        </dl>
+        <nav className="db-nav" aria-label="Debrief sections">
+          <a href="#p-h">Profile</a><a href="#d-h">What to review</a><a href="#m-h">Meters</a><a href="#t-h">Timeline</a><a href="#c-h">Root causes</a>
+        </nav>
       </header>
 
       <section aria-labelledby="p-h" className="db-section">
@@ -213,10 +223,13 @@ export function Debrief() {
       </section>
 
 
+      <div className="db-print">
+        <label className="db-name"><span>Name for the printout</span><input value={settings.learnerName} onChange={(e) => setSettings({ learnerName: e.target.value })} placeholder="Optional" autoComplete="name" /><span className="fine">Stays in this browser.</span></label>
+        <button className="btn btn--ghost" onClick={() => window.print()}>Print or save as PDF</button>
+      </div>
       <div className="db-actions">
         <button className="btn btn--gold" onClick={() => startRun({ seed: snap.seed, mode: snap.mode })}>Replay run {snap.seed}</button>
         <button className="btn btn--ghost" onClick={() => startRun({ mode: snap.mode })}>New run</button>
-        <button className="btn btn--ghost" onClick={() => window.print()}>Print or save as PDF</button>
         <button className="btn btn--ghost" onClick={restart}>Back to title</button>
       </div>
       <p className="fine">{department.name} is fictional. A Futures Learning Hub simulation.</p>

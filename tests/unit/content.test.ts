@@ -20,6 +20,10 @@ describe('content', () => {
     expect(photos.filter((f) => !existsSync(f))).toEqual([]);
     expect(photos.filter((f) => statSync(f).size > 40_000)).toEqual([]);
   });
+  it('everyone with a desk in the office has a 3D look to match their portrait', () => {
+    const inOffice = people.filter((p) => p.desk !== 'offsite');
+    expect(inOffice.filter((p) => !p.look).map((p) => p.id)).toEqual([]);
+  });
   it('every [SME] policy is logged in CONTENT_TODO.md', async () => {
     const fs = await import('node:fs');
     const todo = fs.readFileSync('CONTENT_TODO.md', 'utf8');

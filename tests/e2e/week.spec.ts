@@ -9,6 +9,23 @@ test('title screen loads with no serious accessibility violations', async ({ pag
   expect(await axe(page)).toEqual([]);
 });
 
+test('3D office: inside the draw call budget, and the first request shows on its sender', async ({ page }) => {
+  await page.addInitScript(() => localStorage.setItem('pp_settings', JSON.stringify({ view: '3d', reducedMotion: true, speed: 'manual', voices: false, tourDone: true })));
+  // ?full keeps the full picture on the test runner's software renderer, so the budget is measured on the heaviest version.
+  await page.goto('/?perf&full');
+  await page.getByTestId('start').click();
+  for (let i = 0; i < 3; i++) await page.getByRole('button', { name: 'Next', exact: false }).click();
+  await page.getByTestId('begin').click();
+  await expect(page.locator('.scene canvas')).toBeVisible();
+  // SPEC 9.6: under 150 draw calls, shadow pass included, and under 200k triangles.
+  await expect.poll(async () => (await page.evaluate(() => window.__perf?.calls ?? 0)), { timeout: 30_000 }).toBeGreaterThan(10);
+  const perf = await page.evaluate(() => window.__perf!);
+  expect(perf.calls).toBeLessThan(150);
+  expect(perf.triangles).toBeLessThan(200_000);
+  // Renee is waiting with the first request, so her figure carries the Wants to talk symbol.
+  await expect(page.locator('.chip--talk')).toHaveCount(1);
+});
+
 test('perfect week in 3D: every request right, every topic mastered, Ready, no pay day problems', async ({ page }) => {
   test.setTimeout(900_000);
   await start(page, { code: 'e2e-perfect' });

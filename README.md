@@ -11,8 +11,8 @@ weekly), and on pay day every decision shows up on someone's check. A full run t
   anti-guessing rules for answer length, feedback that teaches, the clock, scoring and readiness by area,
   consequences, perfect and worst runs, the week machine, and the voice manifest)
 - `npm run test:e2e`: Playwright runs (a perfect week in 3D, the worst week, the guided tour, the request panel,
-  phones, List view by keyboard, axe-core, voices, the live conversation against a stand-in socket, and Answer
-  out loud with a stand-in recognizer)
+  phones, List view by keyboard, axe-core, the 3D draw call budget, voices, the live conversation against a
+  stand-in socket, and Answer out loud with a stand-in recognizer)
 
 Live: https://me5231979.github.io/HCM-SIM/ (every push to main runs the tests, then publishes to the gh-pages branch).
 
@@ -27,6 +27,32 @@ waiting on a subject matter expert shows to learners as "Being confirmed".
   an earlier answer makes them moot (`skipIf`), or reveal a follow-up decision (`showIf`).
 - Scoring runs only through eventBus decision events. The debrief rates readiness by area and links each missed
   decision to its Academy course.
+
+## The 3D office
+
+The office is built in code. Nothing is downloaded: no models, no image textures, no photographed sky.
+
+- `src/scene/set.ts` is the set: walls, windows, the glass offices, the desk bench, the lounge, the break room, every
+  plant and lamp. It builds from boxes and cylinders through `src/scene/kit.ts`, which merges everything into one
+  mesh per material. To add furniture, add it there. A separate `<mesh>` for each piece is what the old scene did,
+  and it cost about 370 draw calls; the merged set and the instanced people cost about 40.
+- `src/scene/Figures.tsx` draws everyone from six shared shapes, instanced. Each person's `look` in
+  `content/employees.json` (skin, hair, hair style, top, glasses, beard) matches their portrait, so the same person
+  is recognizable in the office, the inbox, and the request panel. `npm test` fails if someone with a desk has no look.
+- `src/scene/Lighting.tsx` moves the sun and the sky behind the windows with the sim clock, 8:00 to 18:00, so the
+  light tells you how late in the day it is. `src/scene/textures.ts` draws the floor planks, the bulletin board
+  (this run's payroll calendar, with its deadlines and pay day marked), and the wall sign in a canvas.
+- `src/scene/layout.ts` holds positions and seats; `src/places.ts` is the one list of places behind both the 3D
+  hotspots and the Places bar. What moves (people, clock hands, your screens, the sky) lives in `Office.tsx`.
+- Status symbols and place names are page elements over the canvas (`src/scene/Tags.tsx` pins each to its spot),
+  so they stay sharp and cost nothing to draw.
+- Budget (SPEC 9.6): add `?perf` to the address and `window.__perf` reports draw calls, triangles, and frame rate.
+  The end-to-end tests fail at 150 draw calls or 200,000 triangles, shadow passes included.
+- Slow machines get a lighter picture instead of a slow one. The pixel ratio follows the measured frame rate. If that
+  isn't enough, or the browser is drawing 3D without graphics hardware (remote desktops, some locked-down laptops,
+  the test runners), the office drops the sun's shadows and the reflections and draws at three quarters of the
+  resolution, 20 times a second. `?light` forces that picture; `?full` forces the full one.
+- With Reduce motion on, nothing in the office moves by itself, so it is drawn only when something changes.
 
 ## Voices and live conversations
 

@@ -42,7 +42,7 @@ export function InboxList({ compact = false }: { compact?: boolean }) {
           </button>
         ); })}
       </div>
-      {items.length === 0 && <p className="muted">Nothing yet.</p>}
+      {items.length === 0 && <p className="inbox-empty"><Icon.inbox /> {all.length === 0 ? 'Nothing yet. Requests arrive through the day.' : 'Nothing matches these filters.'}</p>}
       <ul className="inbox-list">
         {items.map((it) => {
           const p = personById(it.from);
@@ -50,13 +50,14 @@ export function InboxList({ compact = false }: { compact?: boolean }) {
           return (
             <li key={it.id}>
               <button className={`inbox-item ${it.unread ? 'is-unread' : ''} ${done ? 'is-done' : ''} pr-${it.priority}`} data-step={it.id} data-kind={it.kind} data-status={it.status} onClick={() => (it.kind === 'task' ? s.openStep(it.id) : s.openNoise(it.id))}>
-                {!compact && <Avatar id={it.from} size={34} />}
+                {!compact && <Avatar id={it.from} size={38} />}
                 <span className="ii-main">
                   <span className="ii-subject">{it.unread && <span className="ii-dot" aria-hidden="true" />}{it.subject}{it.unread && <span className="sr-only"> (unread)</span>}</span>
                   <span className="ii-meta">
                     {it.area && <span className="ii-area"><AreaGlyph a={it.area} />{areaById(it.area).short}</span>}
                     {it.quick && <span className="ii-quick">Quick question</span>}
-                    {p.name} · {weekdayLabel(it.receivedAt)} {clockLabel(it.receivedAt)}{it.dueAt && !done ? ` · due ${weekdayLabel(it.dueAt)} ${clockLabel(it.dueAt)}` : ''}
+                    <span className="ii-from">{p.name} · {weekdayLabel(it.receivedAt)} {clockLabel(it.receivedAt)}</span>
+                    {it.dueAt && !done && <span className="ii-due"><Icon.clock />Due {weekdayLabel(it.dueAt)} {clockLabel(it.dueAt)}</span>}
                   </span>
                 </span>
                 <span className={`ii-status st-${it.kind === 'noise' ? 'fyi' : it.status}`}>

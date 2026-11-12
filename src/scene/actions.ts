@@ -19,7 +19,7 @@ export function activatePerson(personId: string) {
   const st = personStatus(personId, s.game, s.snap);
   if (st.stepId && s.phase === 'playing') { s.openStep(st.stepId); return; }
   const p = personById(personId);
-  s.setPanel({ focus: p.desk.startsWith('office_') ? p.desk : p.desk === 'hcm_2' ? 'terminal' : 'overview' });
+  s.setPanel({ focus: p.desk.startsWith('office_') || p.desk === 'reception' ? p.desk : p.desk === 'hcm_2' ? 'terminal' : 'overview' });
   if (p.greeting && s.phase === 'playing') {
     s.setPanel({ bubble: { id: Date.now(), speaker: p.id, text: p.greeting } });
     s.announce(`${p.name}, ${p.title}: ${p.greeting}`);

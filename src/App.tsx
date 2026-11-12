@@ -78,7 +78,7 @@ export default function App() {
     const b = paydayBeats(snap)[s.beat];
     if (!b) return;
     const desk = personById(b.speaker).desk;
-    s.setPanel({ focus: desk.startsWith('office_') ? desk : desk === 'hcm_2' ? 'terminal' : 'overview' });
+    s.setPanel({ focus: desk.startsWith('office_') || desk === 'reception' ? desk : desk === 'hcm_2' ? 'terminal' : 'overview' });
   }, [phase, s.beat]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
