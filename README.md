@@ -14,7 +14,7 @@ weekly), and on pay day every decision shows up on someone's check. A full run t
   phones, List view by keyboard, axe-core, the 3D draw call budget, voices, the live conversation against a
   stand-in socket, and Answer out loud with a stand-in recognizer)
 
-Live: https://me5231979.github.io/HCM-SIM/ (every push to main runs the tests, then publishes to the gh-pages branch).
+Live: https://futureslearninghub.github.io/HCM-SIM/ (every push to main runs the tests, then publishes to the gh-pages branch).
 
 Read SPEC.md and CLAUDE.md before contributing. Open policy questions are in CONTENT_TODO.md, and anything still
 waiting on a subject matter expert shows to learners as "Being confirmed".
@@ -78,7 +78,7 @@ Every character has an ElevenLabs voice. Captions always show, and the Voices bu
   learner turned it down, so a pushback that never came up costs nothing. The tool's field descriptions and the
   prompt's grading section must match `coaching` in `content/live.json`. ElevenLabs tests replay real conversations
   (Marcus: a learner who names the I-9 late and turns down unpaid shadowing; Dana: points made early and late); the
-  test runner can't run Claude models, so they run on the backup model, Gemini 2.5 Flash. Agent settings: allowlist `me5231979.github.io`,
+  test runner can't run Claude models, so they run on the backup model, Gemini 2.5 Flash. Agent settings: allowlist `futureslearninghub.github.io`, `me5231979.github.io` (old address),
   `hcm-sim.vercel.app`, `localhost:4173`, and `localhost:5173` (each also listed with its scheme), origin header
   required, 3 minute cap, 5 at once, 100 a day, no bursting, audio not recorded, transcripts deleted after 30 days,
   and replies capped at 1,000 tokens (the model thinks before it speaks, and a 250 cap cut replies off mid-sentence).
